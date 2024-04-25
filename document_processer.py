@@ -1,9 +1,6 @@
+# Using flask as a frontend for uploading file from localhost chosen directory
 from flask import Flask, request, redirect, url_for, send_from_directory,render_template
 from werkzeug.utils import secure_filename
-
-from docx import Document
-from docx.enum.text import WD_COLOR_INDEX
-
 import os
 
 UPLOAD_FOLDER = os.path.abspath("./uploads/")
