@@ -1,0 +1,12 @@
+Directory Structure:
+simsjo-a@LCANB-WEBASH5XH:~/windows/stuff/test_file_input_python$ tree .
+.
+├── notes.txt
+├── python_script.py
+├── templates
+│   └── upload.html
+└── uploads
+
+2 directories, 3 files
+
+
