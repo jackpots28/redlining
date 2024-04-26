@@ -3,8 +3,14 @@ from flask import Flask, request, redirect, url_for, send_from_directory,render_
 from werkzeug.utils import secure_filename
 import os
 
+import docx
+
+import highlight_word_test
+
 UPLOAD_FOLDER = os.path.abspath("./uploads/")
 ALLOWED_EXTENSIONS = set(["txt", "text", "docx","pdf"])
+
+words = ['lorem']
 
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -27,7 +33,14 @@ def upload_file():
             return "No file selected."
         if f and allowed_file(f.filename):
             filename = secure_filename(f.filename)
-            f.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+            doc=docx.Document(filename)
+            for word in words:
+                doc = highlight_word_test.split_Runs(doc, word)
+            for word in words:
+                doc = highlight_word_test.style_Token(doc,word,True)
+
+            doc.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+            # f.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
             return "file successfully upload"
         return "File not allowed."
     return "Upload file route"
