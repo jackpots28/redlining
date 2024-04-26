@@ -5,6 +5,8 @@ from docx.enum.text import WD_COLOR_INDEX
 from pathlib import Path
 import os
 
+#TODO - THIS NEEDS TO BE DONE AS A CLASS STRUCTURE TO BE CALLED EXTERNALLY IN OTHER SRC FILES
+
 test_doc_path = Path("./word_doc_test.docx")
 output_doc_path = Path("./uploads/output_doc.docx")
 
@@ -19,6 +21,7 @@ def split_text(text, word):
 def split_Runs(doc,word):
     for p in doc.paragraphs:
         if p.text.find(word) != -1:
+            print(p.text)
             virtualRuns=p.runs
             p.text = ""
             for r in virtualRuns:
@@ -40,11 +43,21 @@ def style_Token(doc,word,comment=True):
                 p.runs[i].font.strike=True
     return doc
 
-#nums is the list of tokens that is going to be highlighted and comment
-nums=['Lorem']
-for num in nums:
-    doc=split_Runs(doc,num)
-for num in nums:
-    doc=style_Token(doc,num,True)
 
-doc.save(output_doc_path)
+words = ['ipsum']
+
+for word in words:
+    doc = split_Runs(doc, word)
+
+    
+for word in words:
+    doc = style_Token(doc,word,True)
+
+#nums is the list of tokens that is going to be highlighted and comment
+# nums=['vulputate ']
+# for num in nums:
+#     doc=split_Runs(doc,num)
+# for num in nums:
+#     doc=style_Token(doc,num,True)
+
+# doc.save(output_doc_path)

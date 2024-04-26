@@ -4,13 +4,12 @@ from werkzeug.utils import secure_filename
 import os
 
 import docx
-
 import highlight_word_test
 
 UPLOAD_FOLDER = os.path.abspath("./uploads/")
 ALLOWED_EXTENSIONS = set(["txt", "text", "docx","pdf"])
 
-words = ['lorem']
+words = ['ipsum']
 
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -33,6 +32,7 @@ def upload_file():
             return "No file selected."
         if f and allowed_file(f.filename):
             filename = secure_filename(f.filename)
+            # TODO - Redo this to utilize an external class object to create documents, parse, and update/save them
             doc=docx.Document(filename)
             for word in words:
                 doc = highlight_word_test.split_Runs(doc, word)
@@ -40,6 +40,7 @@ def upload_file():
                 doc = highlight_word_test.style_Token(doc,word,True)
 
             doc.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+            #
             # f.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
             return "file successfully upload"
         return "File not allowed."
