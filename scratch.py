@@ -67,3 +67,14 @@ for item in new_list:
 
 # Save it to a new file
 doc.save(output_doc_path)
+
+
+# NOTES
+# import docx
+
+# def getText(filename):
+#     doc = docx.Document(filename)
+#     fullText = []
+#     for para in doc.paragraphs:
+#         fullText.append(para.text)
+#     return '\n'.join(fullText)
