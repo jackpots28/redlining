@@ -12,8 +12,6 @@ logging.basicConfig(level=logging.DEBUG)
 UPLOAD_FOLDER = os.path.abspath("./output_files/")
 ALLOWED_EXTENSIONS = set(["txt", "text", "docx","pdf"])
 
-words = ['ipsum']
-
 def allowed_file(filename: str) -> bool:
     allowed_file_output = "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
     logging.debug(f"Input allow_file filename var type: {type(filename)}")
@@ -40,10 +38,9 @@ def upload_file():
             filename = secure_filename(f.filename)
             # TODO - Redo this to utilize an external class object to create documents, parse, and update/save them
             doc=docx.Document(filename)
-            for word in words:
-                doc = document_processor.split_runs(doc, word)
-            for word in words:
-                doc = document_processor.style_token(doc,word,True)
+            word = request.form['text']
+            doc = document_processor.split_runs(doc, word)
+            doc = document_processor.style_token(doc,word,True)
 
             var_app_config = app.config["UPLOAD_FOLDER"]
             logging.debug(f"Output file location: {os.path.join(var_app_config, filename)}")
