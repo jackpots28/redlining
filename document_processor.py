@@ -7,11 +7,6 @@ import os
 
 #TODO - THIS NEEDS TO BE DONE AS A CLASS STRUCTURE TO BE CALLED EXTERNALLY IN OTHER SRC FILES
 
-# test_doc_path = Path("./word_doc_test.docx")
-# output_doc_path = Path("./uploads/output_doc.docx")
-
-# doc=docx.Document(test_doc_path)
-
 
 def test_split_sentence_to_list(text: str) -> list:
     output_list = list()
@@ -19,14 +14,7 @@ def test_split_sentence_to_list(text: str) -> list:
     print(output_list)
     return output_list
 
-# def split_text(text, word):
-#     pattern = re.compile(r'([\S\s]*)(\b{})([\S\s]*)'.format(word))
-#     match = pattern.search(text)
-#     if match:
-#         return match.groups()
-#     return None
-
-def split_runs(doc,word):
+def split_runs(doc: docx.Document, word: str) -> docx.Document:
     for p in doc.paragraphs:
         print(p.text.find(word))
         if p.text.find(word) != -1:
@@ -39,10 +27,9 @@ def split_runs(doc,word):
                     for word in broken_sentence:
                         p.add_run(word)
                         p.add_run(" ")
-                    # before, word, after = split_text(r.text, word)
     return doc
     
-def style_token(doc,word,comment=True):
+def style_token(doc: docx.Document, word: str, comment=True) -> docx.Document:
     for p in doc.paragraphs:
         for i,r in enumerate(p.runs):
             if p.runs[i].text.find(word) != -1:
