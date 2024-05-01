@@ -35,9 +35,9 @@ def upload_file():
             # TODO - Redo this to utilize an external class object to create documents, parse, and update/save them
             doc=docx.Document(filename)
             for word in words:
-                doc = highlight_word_test.split_Runs(doc, word)
+                doc = highlight_word_test.split_runs(doc, word)
             for word in words:
-                doc = highlight_word_test.style_Token(doc,word,True)
+                doc = highlight_word_test.style_token(doc,word,True)
 
             doc.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
             #
