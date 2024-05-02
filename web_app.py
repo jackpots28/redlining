@@ -2,12 +2,12 @@
 from flask import Flask, request, redirect, url_for, send_from_directory, render_template
 from werkzeug.utils import secure_filename
 from src.processing import document_processor
+from src.logger import logger
 
 import os
-import logging
 import docx
 
-logging.basicConfig(level=logging.DEBUG)
+web_app_logger = logger.setup_logger("web_app_logger", "./logs/web_app.log")
 
 UPLOAD_FOLDER = os.path.abspath("./output_files/")
 ALLOWED_EXTENSIONS = {"txt", "text", "docx", "pdf"}
@@ -15,8 +15,8 @@ ALLOWED_EXTENSIONS = {"txt", "text", "docx", "pdf"}
 
 def allowed_file(filename: str) -> bool:
     allowed_file_output = "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
-    logging.debug(f"Input allow_file filename var type: {type(filename)}")
-    logging.debug(f"{allowed_file_output} - Type: {type(allowed_file_output)}")
+    web_app_logger.debug(f"Input allow_file filename var type: {type(filename)}")
+    web_app_logger.debug(f"{allowed_file_output} - Type: {type(allowed_file_output)}")
     return allowed_file_output
 
 
@@ -32,7 +32,7 @@ def index():
 @app.route("/upload", methods=["GET", "POST"])
 def upload_file():
     if request.method == "POST":
-        if not "file" in request.files:
+        if not"file" in request.files:
             return "No file part in the form."
         f = request.files["file"]
         if f.filename == "":
@@ -46,7 +46,7 @@ def upload_file():
             doc = document_processor.style_token(doc, word, True)
 
             var_app_config = app.config["UPLOAD_FOLDER"]
-            logging.debug(f"Output file location: {os.path.join(var_app_config, filename)}")
+            web_app_logger.debug(f"Output file location: {os.path.join(var_app_config, filename)}")
             doc.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
             return "file successfully upload"
         return "File not allowed."

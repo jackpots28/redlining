@@ -1,12 +1,12 @@
 from pathlib import Path
 from docx.enum.text import WD_COLOR_INDEX
+from src.logger import logger
 
 import docx
 import re
 import os
-import logging
 
-logging.basicConfig(level=logging.DEBUG)
+document_processing_logger = logger.setup_logger("document_processing_logger", "./logs/document_processing.log")
 
 
 #TODO - THIS NEEDS TO BE DONE AS A CLASS STRUCTURE TO BE CALLED EXTERNALLY IN OTHER SRC FILES
@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.DEBUG)
 def split_sentence_to_list(text: str) -> list:
     output_list = list()
     output_list = text.split(" ")
-    logging.debug(f"Split sentence: {output_list}")
+    document_processing_logger.debug(f"Split sentence: {output_list}")
     return output_list
 
 
@@ -22,10 +22,10 @@ def split_sentence_to_list(text: str) -> list:
 # to apply formatting based on if keyword is found in list of runs
 def split_runs(doc: docx.Document, word: str) -> docx.Document:
     for p in doc.paragraphs:
-        logging.debug(f"Bool if word is found: {p.text.find(word)}")
+        document_processing_logger.debug(f"Bool if word is found: {p.text.find(word)}")
         if p.text.find(word) != -1:
             DEBUGGING_OUTPUT_TEXT = p.text
-            logging.debug(f"Text as of found {word}:\n{DEBUGGING_OUTPUT_TEXT}")
+            document_processing_logger.debug(f"Text as of found {word}:\n{DEBUGGING_OUTPUT_TEXT}")
             virtual_runs = p.runs
             p.text = ""
             for r in virtual_runs:
