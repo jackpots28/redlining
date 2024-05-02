@@ -8,6 +8,7 @@ import logging
 
 logging.basicConfig(level=logging.DEBUG)
 
+
 #TODO - THIS NEEDS TO BE DONE AS A CLASS STRUCTURE TO BE CALLED EXTERNALLY IN OTHER SRC FILES
 
 def split_sentence_to_list(text: str) -> list:
@@ -16,7 +17,8 @@ def split_sentence_to_list(text: str) -> list:
     logging.debug(f"Split sentence: {output_list}")
     return output_list
 
-# Creates a set of "virtual" runs that the "style_token" func loops through 
+
+# Creates a set of "virtual" runs that the "style_token" func loops through
 # to apply formatting based on if keyword is found in list of runs
 def split_runs(doc: docx.Document, word: str) -> docx.Document:
     for p in doc.paragraphs:
@@ -24,9 +26,9 @@ def split_runs(doc: docx.Document, word: str) -> docx.Document:
         if p.text.find(word) != -1:
             DEBUGGING_OUTPUT_TEXT = p.text
             logging.debug(f"Text as of found {word}:\n{DEBUGGING_OUTPUT_TEXT}")
-            virtualRuns=p.runs
+            virtual_runs = p.runs
             p.text = ""
-            for r in virtualRuns:
+            for r in virtual_runs:
                 if r.text.find(word) != -1:
                     broken_sentence = split_sentence_to_list(r.text)
                     for word in broken_sentence:
@@ -34,15 +36,15 @@ def split_runs(doc: docx.Document, word: str) -> docx.Document:
                         p.add_run(" ")
     return doc
 
-# Loops over doc "runs" and applies text formatting only to "keywords" that are found  
+
+# Loops over doc "runs" and applies text formatting only to "keywords" that are found
 def style_token(doc: docx.Document, word: str, comment=True) -> docx.Document:
     for p in doc.paragraphs:
-        for i,r in enumerate(p.runs):
+        for i, r in enumerate(p.runs):
             if p.runs[i].text.find(word) != -1:
                 p.runs[i].font.highlight_color = WD_COLOR_INDEX.RED
-                p.runs[i].font.strike=True
+                p.runs[i].font.strike = True
     return doc
-
 
 # words = ['ipsum']
 
