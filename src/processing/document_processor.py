@@ -1,12 +1,14 @@
 from pathlib import Path
 from docx.enum.text import WD_COLOR_INDEX
 from src.logger import logger
+from pathlib import Path
 
 import docx
 import re
 import os
 
-document_processing_logger = logger.setup_logger("document_processing_logger", "./logs/document_processing.log")
+log_path = Path("./logs/document_processing.log")
+document_processing_logger = logger.setup_logger("document_processing_logger", log_path)
 
 
 #TODO - THIS NEEDS TO BE DONE AS A CLASS STRUCTURE TO BE CALLED EXTERNALLY IN OTHER SRC FILES

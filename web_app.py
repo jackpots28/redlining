@@ -3,11 +3,12 @@ from flask import Flask, request, redirect, url_for, send_from_directory, render
 from werkzeug.utils import secure_filename
 from src.processing import document_processor
 from src.logger import logger
-
+from pathlib import Path
 import os
 import docx
 
-web_app_logger = logger.setup_logger("web_app_logger", "./logs/web_app.log")
+log_path = Path("./logs/web_app.log")
+web_app_logger = logger.setup_logger("web_app_logger", log_path)
 
 UPLOAD_FOLDER = os.path.abspath("./output_files/")
 ALLOWED_EXTENSIONS = {"txt", "text", "docx", "pdf"}
@@ -32,7 +33,7 @@ def index():
 @app.route("/upload", methods=["GET", "POST"])
 def upload_file():
     if request.method == "POST":
-        if not"file" in request.files:
+        if not "file" in request.files:
             return "No file part in the form."
         f = request.files["file"]
         if f.filename == "":
