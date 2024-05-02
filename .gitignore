@@ -1,3 +1,8 @@
 *pycache*
 */*pycache*
 .idea/
+logs/*
+output_files/*
+
+!output_files/.gitkeep
+!logs/.gitkeep
