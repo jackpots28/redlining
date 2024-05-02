@@ -28,7 +28,7 @@ Install dependencies
 Start the flask server
 
 ```bash
-  python3 document_processer.py
+  python3 web_app.py
 ```
 
 
