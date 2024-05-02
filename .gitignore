@@ -3,6 +3,8 @@
 .idea/
 logs/*
 output_files/*
+tests/logs/*
 
 !output_files/.gitkeep
 !logs/.gitkeep
+!tests/logs/.gitkeep

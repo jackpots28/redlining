@@ -11,12 +11,10 @@ log_path = Path("./logs/document_processing.log")
 document_processing_logger = logger.setup_logger("document_processing_logger", log_path)
 
 
-#TODO - THIS NEEDS TO BE DONE AS A CLASS STRUCTURE TO BE CALLED EXTERNALLY IN OTHER SRC FILES
-
 def split_sentence_to_list(text: str) -> list:
     output_list = list()
     output_list = text.split(" ")
-    document_processing_logger.debug(f"Split sentence: {output_list}")
+    document_processing_logger.debug(f"Split sentence buffer: {output_list}")
     return output_list
 
 
@@ -24,10 +22,10 @@ def split_sentence_to_list(text: str) -> list:
 # to apply formatting based on if keyword is found in list of runs
 def split_runs(doc: docx.Document, word: str) -> docx.Document:
     for p in doc.paragraphs:
-        document_processing_logger.debug(f"Bool if word is found: {p.text.find(word)}")
+        document_processing_logger.debug(f"Boolean value if word is found: {p.text.find(word)}")
         if p.text.find(word) != -1:
             DEBUGGING_OUTPUT_TEXT = p.text
-            document_processing_logger.debug(f"Text as of found {word}:\n{DEBUGGING_OUTPUT_TEXT}")
+            document_processing_logger.debug(f"Text buffer as of found: {word}:\n{DEBUGGING_OUTPUT_TEXT}")
             virtual_runs = p.runs
             p.text = ""
             for r in virtual_runs:
