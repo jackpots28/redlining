@@ -1,0 +1,7 @@
+{
+    "inputs": {
+        "source_sentence": "The net 30 of the contract is",
+        "sentences": ["The terms are set to 30 for a net amount",
+                      "agreed value will be on the terms"]
+    }
+}
