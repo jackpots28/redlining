@@ -1,13 +1,17 @@
 from docx.enum.text import WD_COLOR_INDEX
-from src.logger.logger import func_log
 from pathlib import Path
-from src.logger import logger
 
 import docx
-import os
+import os, sys
+
 
 # Setup for logging and root_path for referencing files/dirs consistently
 project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), '../..'))
+sys.path.insert(0, os.path.abspath(project_root))
+
+from src.logger import logger
+from src.logger.logger import func_log
+
 log_path = Path(f"{project_root}/logs/document_processing.log")
 document_processing_logger = logger.setup_logger("document_processing_logger", log_path)
 
@@ -56,7 +60,6 @@ def style_token(doc: docx.Document, word: str, comment=True) -> docx.Document:
                 p.runs[i].font.highlight_color = WD_COLOR_INDEX.RED
                 p.runs[i].font.strike = True
     return doc
-
 
 ###
 

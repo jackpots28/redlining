@@ -1,15 +1,19 @@
 # Using flask as a frontend for uploading file from localhost chosen directory
 from flask import Flask, request, redirect, url_for, send_from_directory, render_template
 from werkzeug.utils import secure_filename
-from src.processing import document_processor
-from src.logger import logger
-from src.logger.logger import func_log
 from pathlib import Path
-import os
+
+import os, sys
 import docx
 
 # Setup for logging and root_path for referencing files/dirs consistently
 project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), './'))
+sys.path.insert(0, os.path.abspath(project_root))
+
+from src.processing import document_processor
+from src.logger import logger
+from src.logger.logger import func_log
+
 log_path = Path(f"{project_root}/logs/web_app.log")
 web_app_logger = logger.setup_logger("web_app_logger", log_path)
 

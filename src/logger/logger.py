@@ -1,12 +1,13 @@
 from pathlib import Path
 from typing import Callable
 import logging
-import os
+import os, sys
 
 # Setup for logging and root_path for referencing files/dirs consistently
 project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), '../..'))
-wrapper_log_path = Path(f"{project_root}/logs/func_wrapper.log")
+sys.path.insert(0, os.path.abspath(project_root))
 
+wrapper_log_path = Path(f"{project_root}/logs/func_wrapper.log")
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
 
 # Generic logger for use inside of functions or other objects
