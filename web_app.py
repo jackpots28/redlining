@@ -3,17 +3,20 @@ from flask import Flask, request, redirect, url_for, send_from_directory, render
 from werkzeug.utils import secure_filename
 from src.processing import document_processor
 from src.logger import logger
+from src.logger.logger import func_log
 from pathlib import Path
 import os
 import docx
 
-log_path = Path("./logs/web_app.log")
+# Setup for logging and root_path for referencing files/dirs consistently
+project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), './'))
+log_path = Path(f"{project_root}/logs/web_app.log")
 web_app_logger = logger.setup_logger("web_app_logger", log_path)
 
 UPLOAD_FOLDER = os.path.abspath("./output_files/")
 ALLOWED_EXTENSIONS = {"txt", "text", "docx", "pdf"}
 
-
+@func_log
 def allowed_file(filename: str) -> bool:
     allowed_file_output = "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
     web_app_logger.debug(f"Input allow_file filename var type: {type(filename)}")
@@ -45,6 +48,10 @@ def upload_file():
             word = request.form['text']
             doc = document_processor.split_runs(doc, word)
             doc = document_processor.style_token(doc, word, True)
+
+            # Live testing doc_to_dict function
+            test_dict = document_processor.doc_to_dict(doc)
+            web_app_logger.debug(f"{ {k:v for (k,v) in test_dict.items()} }")
 
             var_app_config = app.config["UPLOAD_FOLDER"]
             web_app_logger.debug(f"Output file location: {os.path.join(var_app_config, filename)}")
