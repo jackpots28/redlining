@@ -6,23 +6,48 @@ from docx import Document
 from docx.enum.text import WD_COLOR_INDEX
 
 from pathlib import Path
-import os
+import os, sys, string
 from src.logger.logger import func_log
 
 test_doc_path = Path("./word_doc_test.docx")
-output_doc_path = Path("./uploads/output_doc.docx")
-
+output_doc_path = Path("./output_files/word_doc_test.docx")
 
 print(f"Is the test file path correct: {test_doc_path.is_file()}", end="\n")
 print(f"docx version: {docx.__version__}", end="\n\n")
 
-
 doc = Document(test_doc_path)
+output_doc = Document()
 
-old_list = list()
-new_list = list()
+'''
+This is a good working test for stripping paragraphs into dictionaries of lists of strings
+'''
+def doc_to_dict(input_doc: docx.Document) -> dict[int, list[str]]:
+    return {k:[[word.strip(string.punctuation)] \
+        for word in (v.text).split(". ") \
+            if word] for (k,v) in enumerate(input_doc.paragraphs)}
 
-print(Path(f"{Path(__file__).parent}/logs/wrapper_logs/func_wrapper.log").is_file())
+
+###
+# def extract_words_using_find(input_string: str) -> list[list]:
+#     words = [[word.strip(string.punctuation)] for word in input_string.split(". ") if word]
+#     return words
+
+# print(f"{ {k:v for (k,v) in doc_to_dict(doc).items()} }")
+
+test_dict = doc_to_dict(doc)
+
+for k, v in test_dict.items():
+    #print(f'{k}: {v}')
+    for item in v:
+        if "ipsum" in str(item):
+            print(f"{k}: {item}")
+
+        # temp_list = extract_words_using_find(v)
+        # print(temp_list)
+        # output_doc.add_paragraph(v)
+
+
+# output_doc.save("./output_files/test_doc.docx")
 
 
 

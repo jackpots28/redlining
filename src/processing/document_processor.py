@@ -22,10 +22,8 @@ def doc_to_dict(input_doc: docx.Document) -> dict[int, str]:
 
 @func_log
 def split_sentence_to_list(text: str) -> list:
-    output_list = list()
-    output_list = text.split(" ")
-    #document_processing_logger.debug(f"Split sentence buffer: {output_list}")
-    return output_list
+    document_processing_logger.debug(f"Split sentence buffer: {output_list}")
+    return (text.split(" "))
 
 
 # TODO - Need to rewrite the splits to utilize the doc_to_dict, 
@@ -36,10 +34,10 @@ def split_sentence_to_list(text: str) -> list:
 @func_log
 def split_runs(doc: docx.Document, word: str) -> docx.Document:
     for p in doc.paragraphs:
-        #document_processing_logger.debug(f"Boolean value if word is found: {p.text.find(word)}")
+        document_processing_logger.debug(f"Boolean value if word is found: {p.text.find(word)}")
         if p.text.find(word) != -1:
             DEBUGGING_OUTPUT_TEXT = p.text
-            #document_processing_logger.debug(f"Text buffer as of found: {word}:\n{DEBUGGING_OUTPUT_TEXT}")
+            document_processing_logger.debug(f"Text buffer as of found: {word}:\n{DEBUGGING_OUTPUT_TEXT}")
             virtual_runs = p.runs
             p.text = ""
             for r in virtual_runs:
