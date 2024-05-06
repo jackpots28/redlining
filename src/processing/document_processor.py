@@ -24,6 +24,9 @@ def split_sentence_to_list(text: str) -> list:
     return output_list
 
 
+# TODO - Need to rewrite the splits to utilize the doc_to_dict, 
+# will need to split on ". " = sentence and attempt highlighting full sentence where keyword is found
+
 # Creates a set of "virtual" runs that the "style_token" func loops through
 # to apply formatting based on if keyword is found in list of runs
 @func_log
