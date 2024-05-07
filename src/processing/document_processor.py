@@ -1,26 +1,41 @@
-from pathlib import Path
 from docx.enum.text import WD_COLOR_INDEX
-from src.logger import logger
 from pathlib import Path
+from docx.document import Document
 
 import docx
-import re
-import os
+import os, sys, string
 
-log_path = Path("./logs/document_processing.log")
+
+# Setup for logging and root_path for referencing files/dirs consistently
+project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), '../..'))
+sys.path.insert(0, os.path.abspath(project_root))
+
+from src.logger import logger
+from src.logger.logger import func_log
+
+log_path = Path(f"{project_root}/logs/document_processing.log")
 document_processing_logger = logger.setup_logger("document_processing_logger", log_path)
 
+# Creates k:v pair where the k is just an index and the value is the entire str found via doc.paragraph
+@func_log
+def doc_to_dict(input_doc: Document) -> dict[int, list]:
+    return {k:[[word.strip(string.punctuation)] \
+        for word in (v.text).split(". ") \
+            if word] for (k,v) in enumerate(input_doc.paragraphs)}
 
+@func_log
 def split_sentence_to_list(text: str) -> list:
-    output_list = list()
-    output_list = text.split(" ")
-    document_processing_logger.debug(f"Split sentence buffer: {output_list}")
-    return output_list
+    document_processing_logger.debug(f'Split sentence buffer: {text.split(" ")}')
+    return (text.split(" "))
 
+
+# TODO - Need to rewrite the splits to utilize the doc_to_dict, 
+# will need to split on ". " = sentence and attempt highlighting full sentence where keyword is found
 
 # Creates a set of "virtual" runs that the "style_token" func loops through
 # to apply formatting based on if keyword is found in list of runs
-def split_runs(doc: docx.Document, word: str) -> docx.Document:
+@func_log
+def split_runs(doc: Document, word: str) -> Document:
     for p in doc.paragraphs:
         document_processing_logger.debug(f"Boolean value if word is found: {p.text.find(word)}")
         if p.text.find(word) != -1:
@@ -38,13 +53,16 @@ def split_runs(doc: docx.Document, word: str) -> docx.Document:
 
 
 # Loops over doc "runs" and applies text formatting only to "keywords" that are found
-def style_token(doc: docx.Document, word: str, comment=True) -> docx.Document:
+@func_log
+def style_token(doc: Document, word: str, comment=True) -> Document:
     for p in doc.paragraphs:
         for i, r in enumerate(p.runs):
             if p.runs[i].text.find(word) != -1:
                 p.runs[i].font.highlight_color = WD_COLOR_INDEX.RED
                 p.runs[i].font.strike = True
     return doc
+
+###
 
 # words = ['ipsum']
 
