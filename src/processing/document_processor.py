@@ -6,13 +6,15 @@ import docx
 import os, sys, string
 
 
-# Setup for logging and root_path for referencing files/dirs consistently
+# Setup root_path for referencing files/dirs consistently
 project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), '../..'))
 sys.path.insert(0, os.path.abspath(project_root))
 
+# Sourcing internal packages
 from src.logger import logger
 from src.logger.logger import func_log
 
+# Setup Logging
 log_path = Path(f"{project_root}/logs/document_processing.log")
 document_processing_logger = logger.setup_logger("document_processing_logger", log_path)
 
