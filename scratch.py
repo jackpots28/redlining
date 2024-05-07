@@ -2,7 +2,7 @@
 from typing import Dict, Any, Type
 
 import docx
-from docx import Document
+from docx.document import Document
 from docx.enum.text import WD_COLOR_INDEX
 
 from pathlib import Path
@@ -12,16 +12,16 @@ from src.logger.logger import func_log
 test_doc_path = Path("./word_doc_test.docx")
 output_doc_path = Path("./output_files/word_doc_test.docx")
 
-print(f"Is the test file path correct: {test_doc_path.is_file()}", end="\n")
+print(f"Is the test file path correct: {test_doc_path.is_file()}\n")
 print(f"docx version: {docx.__version__}", end="\n\n")
 
-doc = Document(test_doc_path)
-output_doc = Document()
+doc = docx.Document(str(test_doc_path))
+output_doc = docx.Document()
 
 '''
 This is a good working test for stripping paragraphs into dictionaries of lists of strings
 '''
-def doc_to_dict(input_doc: docx.Document) -> dict[int, list[str]]:
+def doc_to_dict(input_doc: Document) -> dict[int, list]:
     return {k:[[word.strip(string.punctuation)] \
         for word in (v.text).split(". ") \
             if word] for (k,v) in enumerate(input_doc.paragraphs)}

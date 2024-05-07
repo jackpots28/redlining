@@ -17,7 +17,7 @@ from src.logger.logger import func_log
 log_path = Path(f"{project_root}/logs/web_app.log")
 web_app_logger = logger.setup_logger("web_app_logger", log_path)
 
-UPLOAD_FOLDER = os.path.abspath("./output_files/")
+UPLOAD_FOLDER = Path(f"{project_root}/output_files")
 ALLOWED_EXTENSIONS = {"txt", "text", "docx", "pdf"}
 
 @func_log
@@ -36,6 +36,7 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 def index():
     return render_template("upload.html")
 
+# TODO - replace all references to a string filename to a Pathlib filename
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload_file():
@@ -46,7 +47,7 @@ def upload_file():
         if f.filename == "":
             return "No file selected."
         if f and allowed_file(f.filename):
-            filename = secure_filename(f.filename)
+            filename = secure_filename(str(f.filename))
             # TODO - Redo this to utilize an external class object to create documents, parse, and update/save them
             doc = docx.Document(filename)
             word = request.form['text']
