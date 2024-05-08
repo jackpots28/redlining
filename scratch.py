@@ -36,16 +36,8 @@ def doc_to_dict(input_doc: Document) -> dict[int, list[str]]:
 
 test_dict = doc_to_dict(doc)
 
-# for k, v in test_dict.items():
-#     #print(f'{k}: {v}')
-#     for item in v:
-#         if "ipsum" in str(item):
-#             print(f"{k}: {item}")
-
-
-for k, v in test_dict.items():
-    print(f'{k}: {"".join(itertools.chain.from_iterable(v))}')
-
+### - Strikethrough on single sentences where keyword(kword) is found is working
+### - need to combine runs after this on paragraph so paragraphs can be formatted correctly
 ''''''
 temp = tempfile.NamedTemporaryFile(prefix='test_', 
                                    suffix='.docx', 
@@ -53,11 +45,42 @@ temp = tempfile.NamedTemporaryFile(prefix='test_',
                                    delete=False)
 
 output_doc.paragraphs.clear()
-for k, v in test_dict.items():
-    sentence = ". ".join(itertools.chain.from_iterable(v))
-    output_doc.add_paragraph().add_run(f'{k}: {sentence}')
-''''''
+# for k, v in test_dict.items():
+#     sentence = ". ".join(itertools.chain.from_iterable(v))
+#     if "ipsum" in sentence:
+#         output_doc.add_paragraph().add_run(f'{sentence}').font.strike = True
+#     else:
+#         output_doc.add_paragraph().add_run(f"{sentence}")
+
+kword = "ipsum"
+for k, list_of_str in test_dict.items():
+    for single_str in list_of_str:
+        print(single_str)
+        sentence = ". ".join(single_str)
+        print(sentence)
+        if kword in sentence:
+            print(f"{kword}: FOUND!")
+            output_doc.add_paragraph().add_run(f'{sentence}').font.strike = True
+        else:
+            print("Unformatted Sentence")
+            output_doc.add_paragraph().add_run(f"{sentence}")
+
 output_doc.save(temp.name)
+''''''
+
+
+# for k, v in test_dict.items():
+#     #print(f'{k}: {v}')
+#     for item in v:
+#         if "ipsum" in str(item):
+#             print(f"{k}: {item}")
+
+
+# for k, v in test_dict.items():
+#     print(f'{k}: {"".join(itertools.chain.from_iterable(v))}')
+
+
+
 
         # temp_list = extract_words_using_find(v)
         # print(temp_list)

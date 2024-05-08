@@ -27,8 +27,8 @@ def doc_to_dict(input_doc: Document) -> dict[int, list[str]]:
 
 @func_log
 def split_sentence_to_list(text: str) -> list:
-    document_processing_logger.debug(f'Split sentence buffer: {text.split(" ")}')
-    return (text.split(" "))
+    document_processing_logger.debug(f'Split sentence buffer: {text.split(". ")}')
+    return (text.split(". "))
 
 
 # TODO - Need to rewrite the splits to utilize the doc_to_dict, 
@@ -59,6 +59,7 @@ def split_runs(doc: Document, word: str) -> Document:
 def style_token(doc: Document, word: str, comment=True) -> Document:
     for p in doc.paragraphs:
         for i, r in enumerate(p.runs):
+            document_processing_logger.debug(f"r value in enumeration of runs: {r}")
             if p.runs[i].text.find(word) != -1:
                 p.runs[i].font.highlight_color = WD_COLOR_INDEX.RED
                 p.runs[i].font.strike = True
