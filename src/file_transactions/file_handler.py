@@ -29,3 +29,8 @@ def allowed_file(filename: str) -> bool:
     file_handler_logger.debug(f"Input allow_file filename var type: {type(filename)}")
     file_handler_logger.debug(f"{allowed_file_output} - Type: {type(allowed_file_output)}")
     return allowed_file_output
+
+
+@func_log
+def parse_web_request_filepath():
+    None

@@ -20,7 +20,7 @@ document_processing_logger = logger.setup_logger("document_processing_logger", l
 
 # Creates k:v pair where the k is just an index and the value is the entire str found via doc.paragraph
 @func_log
-def doc_to_dict(input_doc: Document) -> dict[int, list]:
+def doc_to_dict(input_doc: Document) -> dict[int, list[str]]:
     return {k:[[word.strip(string.punctuation)] \
         for word in (v.text).split(". ") \
             if word] for (k,v) in enumerate(input_doc.paragraphs)}

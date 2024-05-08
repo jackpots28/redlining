@@ -6,11 +6,11 @@ from docx.document import Document
 from docx.enum.text import WD_COLOR_INDEX
 
 from pathlib import Path
-import os, sys, string
+import os, sys, string, tempfile, itertools
 from src.logger.logger import func_log
 
 test_doc_path = Path("./word_doc_test.docx")
-output_doc_path = Path("./output_files/word_doc_test.docx")
+output_doc_path = Path("./output_files/test_doc.docx")
 
 print(f"Is the test file path correct: {test_doc_path.is_file()}\n")
 print(f"docx version: {docx.__version__}", end="\n\n")
@@ -21,7 +21,7 @@ output_doc = docx.Document()
 '''
 This is a good working test for stripping paragraphs into dictionaries of lists of strings
 '''
-def doc_to_dict(input_doc: Document) -> dict[int, list]:
+def doc_to_dict(input_doc: Document) -> dict[int, list[str]]:
     return {k:[[word.strip(string.punctuation)] \
         for word in (v.text).split(". ") \
             if word] for (k,v) in enumerate(input_doc.paragraphs)}
@@ -36,11 +36,28 @@ def doc_to_dict(input_doc: Document) -> dict[int, list]:
 
 test_dict = doc_to_dict(doc)
 
+# for k, v in test_dict.items():
+#     #print(f'{k}: {v}')
+#     for item in v:
+#         if "ipsum" in str(item):
+#             print(f"{k}: {item}")
+
+
 for k, v in test_dict.items():
-    #print(f'{k}: {v}')
-    for item in v:
-        if "ipsum" in str(item):
-            print(f"{k}: {item}")
+    print(f'{k}: {"".join(itertools.chain.from_iterable(v))}')
+
+''''''
+temp = tempfile.NamedTemporaryFile(prefix='test_', 
+                                   suffix='.docx', 
+                                   dir="./output_files/", 
+                                   delete=False)
+
+output_doc.paragraphs.clear()
+for k, v in test_dict.items():
+    sentence = ". ".join(itertools.chain.from_iterable(v))
+    output_doc.add_paragraph().add_run(f'{k}: {sentence}')
+''''''
+output_doc.save(temp.name)
 
         # temp_list = extract_words_using_find(v)
         # print(temp_list)
