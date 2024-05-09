@@ -39,10 +39,10 @@ def split_sentence_to_list(text: str) -> list:
 @func_log
 def split_runs(doc: Document, word: str) -> Document:
     for p in doc.paragraphs:
-        document_processing_logger.debug(f"Boolean value if word is found: {p.text.find(word)}")
+        # document_processing_logger.debug(f"Boolean value if word is found: {p.text.find(word)}")
         if p.text.find(word) != -1:
-            DEBUGGING_OUTPUT_TEXT = p.text
-            document_processing_logger.debug(f"Text buffer as of found: {word}:\n{DEBUGGING_OUTPUT_TEXT}")
+            # DEBUGGING_OUTPUT_TEXT = p.text
+            # document_processing_logger.debug(f"Text buffer as of found: {word}:\n{DEBUGGING_OUTPUT_TEXT}")
             virtual_runs = p.runs
             p.text = ""
             for r in virtual_runs:
