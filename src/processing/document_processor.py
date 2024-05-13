@@ -1,3 +1,5 @@
+from typing import Dict, Any, List
+
 from docx.enum.text import WD_COLOR_INDEX
 from pathlib import Path
 from docx.document import Document
@@ -20,15 +22,15 @@ document_processing_logger = logger.setup_logger("document_processing_logger", l
 
 # Creates k:v pair where the k is just an index and the value is the entire str found via doc.paragraph
 @func_log
-def doc_to_dict(input_doc: Document) -> dict[int, list[str]]:
+def doc_to_dict(input_doc: Document) -> dict[Any, list[list[Any]]]:
     return {k:[[word.strip(string.punctuation)] \
-        for word in (v.text).split(". ") \
+        for word in v.text.split(". ") \
             if word] for (k,v) in enumerate(input_doc.paragraphs)}
 
 @func_log
 def split_sentence_to_list(text: str) -> list:
     document_processing_logger.debug(f'Split sentence buffer: {text.split(". ")}')
-    return (text.split(". "))
+    return text.split(". ")
 
 
 # TODO - Need to rewrite the splits to utilize the doc_to_dict, 
@@ -40,7 +42,7 @@ def split_sentence_to_list(text: str) -> list:
 def split_runs(doc: Document, word: str) -> Document:
     for p in doc.paragraphs:
         # document_processing_logger.debug(f"Boolean value if word is found: {p.text.find(word)}")
-        if p.text.find(word) != -1:
+        if word in p.text:
             # DEBUGGING_OUTPUT_TEXT = p.text
             # document_processing_logger.debug(f"Text buffer as of found: {word}:\n{DEBUGGING_OUTPUT_TEXT}")
             virtual_runs = p.runs
