@@ -17,9 +17,6 @@ RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.n
     dnf install -y --setopt=tsflags=nodocs \
                     cmake \
                     gcc \
-                    g++ \
-                    python-devel \
-                    platform-python-devel \
                     less \
                     lsof \
                     libicu \
