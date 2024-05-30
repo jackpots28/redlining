@@ -15,16 +15,13 @@ USER root
 RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm && \
     dnf install -y --setopt=tsflags=nodocs \
                     cmake \
-                    openssh-server \
-                    openssl-devel \
                     gcc \
                     g++ \
-                    rust \
-                    cargo \
                     python-devel \
                     platform-python-devel \
                     less \
                     lsof \
+                    libicu \
                     iperf \ 
                     nmap \
                     nmap-ncat \
@@ -41,16 +38,16 @@ RUN sed -i.ORIG -rn 's/(^UID_MIN)(.+)(1000)/\1 \2 500/p; /^UID_MIN/!p' /etc/logi
     groupadd -g 352 -r devgrp && \
     useradd -s /bin/bash -u 540 -g 0 -G devgrp -d /home/devusr -m devusr 
 
+COPY ../. ${WORKING_DIR_NAME}
+
 RUN chmod -R 775 /usr/local/bin && \
     chown -R ${USERNAME}:0 /usr/local/bin && \
-    chown -R ${USERNAME}:0 ${HOME} && \
-    chmod -R 775 ${HOME} && \
+    chown -R ${USERNAME}:${USER_GID} ${HOME} && \
+    chmod -R 777 ${HOME} && \
     mkdir -p ${WORKING_DIR_NAME} && \
-    chown -R ${USERNAME}:0 ${WORKING_DIR_NAME} && \
-    chmod -R 775 ${WORKING_DIR_NAME} && \
+    chown -R ${USERNAME}:${USER_GID} ${WORKING_DIR_NAME} && \
+    chmod -R 777 ${WORKING_DIR_NAME} && \
     rm -f /var/logs/*
-
-COPY --chown="$USER_UID":"$USER_GID" --chmod=644 ../. ${WORKING_DIR_NAME}
 
 # Install any pip required packageds from REQ
 RUN pip install -r ${WORKING_DIR_NAME}/requirements.txt
