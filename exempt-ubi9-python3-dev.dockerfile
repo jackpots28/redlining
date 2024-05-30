@@ -1,9 +1,10 @@
 ## Jack S. - NON-Root Python Dev Container
 
 # FROM registry.access.redhat.com/ubi9:latest as base
-FROM registry.access.redhat.com/ubi9/python-311:latest as base
+FROM registry.access.redhat.com/ubi8/python-311:latest as base
 
 ENV USERNAME=devusr
+ENV USER_GROUP=devgrp
 ENV USER_UID=540
 ENV USER_GID=352
 ENV HOME="/home/${USERNAME}"
@@ -33,8 +34,8 @@ RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.n
     ln -s /usr/bin/python3 /usr/bin/python
 
 RUN sed -i.ORIG -rn 's/(^UID_MIN)(.+)(1000)/\1 \2 500/p; /^UID_MIN/!p' /etc/login.defs && \
-    groupadd -g 352 -r devgrp && \
-    useradd -s /bin/bash -u 540 -g 0 -G devgrp -d /home/devusr -m devusr 
+    groupadd -g ${USER_GID} -r ${USER_GROUP} && \
+    useradd -s /bin/bash -u ${USER_UID} -g 0 -G ${USER_GROUP} -d ${HOME} -m ${USERNAME} 
 
 COPY ../. ${WORKING_DIR_NAME}
 
@@ -54,7 +55,7 @@ RUN pip install -r ${WORKING_DIR_NAME}/requirements.txt
 
 FROM interum as final
 
-USER 540
+USER ${USER_UID}
 WORKDIR ${WORKING_DIR_NAME} 
 
 ENTRYPOINT ["/usr/bin/bash"]
