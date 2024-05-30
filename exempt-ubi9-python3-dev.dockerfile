@@ -13,7 +13,7 @@ ENV WORKING_DIR_NAME="${HOME}/project"
 USER root
 
 # Install any possibly needed compile time packages
-RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm && \
+RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && \
     dnf install -y --setopt=tsflags=nodocs \
                     cmake \
                     gcc \
