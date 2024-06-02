@@ -1,6 +1,6 @@
 ## Jack S. - NON-Root Python Dev Container
 
-# FROM registry.access.redhat.com/ubi9:latest as base
+# FROM registry.access.redhat.com/ubi9:latest as base - ubi9 is unable to downgrade libffi which breaks spire.doc
 FROM registry.access.redhat.com/ubi8/python-311:latest as base
 
 ENV USERNAME=devusr
@@ -12,7 +12,7 @@ ENV WORKING_DIR_NAME="${HOME}/project"
 
 USER root
 
-# Install any possibly needed compile time packages
+# Install any possibly needed compile time packages / test issues
 RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && \
     dnf install -y --setopt=tsflags=nodocs \
                     cmake \
