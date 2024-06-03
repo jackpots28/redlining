@@ -14,14 +14,14 @@ project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), '../..')
 sys.path.insert(0, os.path.abspath(project_root))
 
 # Sourcing internal packages
-from src.logger import logger
-from src.logger.logger import func_log
+# from src.logger import logger
+# from src.logger.logger import func_log
 
-from src.file_transactions.file_handler import create_temp_file
+# from src.file_transactions.file_handler import create_temp_file
 
 # Setup Logging
-log_path = Path(f"{project_root}/logs/spire_document_processing.log")
-spire_processing_logger = logger.setup_logger("spire_document_processing_logger", log_path)
+# log_path = Path(f"{project_root}/logs/spire_document_processing.log")
+# spire_processing_logger = logger.setup_logger("spire_document_processing_logger", log_path)
 
 '''
 spire.doc based functions 
@@ -37,7 +37,7 @@ def spire_replace_phrase(ingest_document_path: Path, output_dir: Path, search_ph
 
     # This was buggy and creating a duplicate output file in scratches dir
     # output_file = create_temp_file(output_dir, ingest_document_path, )
-    
+
     document = Document()
     document.LoadFromFile(f"{ingest_document_path}")
 
@@ -53,7 +53,7 @@ def spire_replace_phrase(ingest_document_path: Path, output_dir: Path, search_ph
         text_range.CharacterFormat.HighlightColor = Color.get_Red()
         text_range.CharacterFormat.IsStrikeout = True
 
-    spire_processing_logger.debug(f"{output_file}\n{output_file.name}")
+    # spire_processing_logger.debug(f"{output_file}\n{output_file.name}")
     document.SaveToFile(output_file.name, FileFormat.Docx2016)
     document.Close()
 
