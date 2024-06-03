@@ -29,7 +29,7 @@ RUN chmod -R 775 /usr/local/bin && \
 
 # Install any possibly needed compile time packages / test issues - system_packages.list file contains this list
 RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
-RUN dnf install -y --setopt=tsflags=nodocs --exclude container-selinux < ${WORKING_DIR_NAME}/system_packages.list
+RUN dnf install -y --setopt=tsflags=nodocs --exclude container-selinux $(${WORKING_DIR_NAME}/system_packages.list)
 RUN dnf clean all && \
     ln -s /usr/bin/python3 /usr/bin/python
 
