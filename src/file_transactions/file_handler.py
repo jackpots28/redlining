@@ -1,7 +1,7 @@
+import os
+import sys
+import tempfile
 from pathlib import Path
-from werkzeug.utils import secure_filename
-
-import os, sys
 
 '''
 TODO - need to start writing this file handler for sanitization 
@@ -31,6 +31,20 @@ def allowed_file(filename: str) -> bool:
     return allowed_file_output
 
 
+''' Ingest a destination dir and naming convention - output temp file path'''
+
+
+def create_temp_file(output_dir: Path, prefix_name: Path, suffix_type: str = ".docx", ) -> Path:
+    output_file_name = tempfile.NamedTemporaryFile(prefix=f"{prefix_name.stem}_",
+                                                   suffix=f"{suffix_type}",
+                                                   dir=f"{output_dir}",
+                                                   delete=False, )
+    output_path = Path(output_file_name.name)
+    file_handler_logger.debug(f"Output temp file value: {output_file_name} - {output_file_name.name}")
+    file_handler_logger.debug(f"Output path value: {output_path}")
+    return output_path
+
+
 @func_log
 def parse_web_request_filepath():
-    None
+    return None

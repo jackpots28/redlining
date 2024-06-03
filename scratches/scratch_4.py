@@ -19,7 +19,7 @@ temp = tempfile.NamedTemporaryFile(prefix='test_',
 # Create a Document object
 document = Document()
 # Load a Word docx or doc document
-document.LoadFromFile("word_doc_test.docx")
+document.LoadFromFile("../word_doc_test.docx")
 
 search_word="ipsum"
 textSelections = document.FindAllString(search_word, False, True)
