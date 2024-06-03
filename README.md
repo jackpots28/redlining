@@ -43,7 +43,7 @@ sudo chmod -R 777 /tmp/temp_dir
 
 Run the container - Current entrypoint will not run the Python package but you can interact with the runtime
 ```bash
-podman run -it --rm --entrypoint /usr/bin/bash -v /tmp/temp_dir:/home/devusr/project/output_files ghcr.io/jackpots28/redlining:latest
+podman run -it --rm --entrypoint /usr/bin/bash -p 8080:8080 -v /tmp/temp_dir:/home/devusr/project/output_files ghcr.io/jackpots28/redlining:latest
 ```
 
 ---
