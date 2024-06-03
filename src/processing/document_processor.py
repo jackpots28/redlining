@@ -1,12 +1,11 @@
-from typing import Dict, Any, List
-
-from docx.enum.text import WD_COLOR_INDEX
+import os
+import string
+import sys
 from pathlib import Path
+from typing import Any
+
 from docx.document import Document
-
-import docx
-import os, sys, string
-
+from docx.enum.text import WD_COLOR_INDEX
 
 # Setup root_path for referencing files/dirs consistently
 project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), '../..'))

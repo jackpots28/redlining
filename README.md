@@ -18,7 +18,7 @@ cd redlining
 
 Install dependencies
 ```bash
-python3 -m pip install -r requirements.txt
+python3 -m pip install -r docker_only_requirements.txt
 ```
 
 Start the flask server

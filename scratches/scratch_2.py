@@ -35,10 +35,10 @@ def highlight_word_in_paragraphs(doc: Document, output_docx_path, word_to_highli
     # Save the modified document
     doc.save(output_docx_path)
 
-project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), '../..'))
+project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), '../../..'))
 sys.path.insert(0, os.path.abspath(project_root))
 
-test_doc_path = Path("./word_doc_test.docx")
+test_doc_path = Path("../word_doc_test.docx")
 output_doc_path = Path("./output_files/test_doc.docx")
 
 word_to_highlight = "ipsum"

@@ -6,11 +6,11 @@ from spire.doc.common import *
 
 import os, sys, tempfile, pathlib
 
-project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), '../..'))
+project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), '../../..'))
 sys.path.insert(0, os.path.abspath(project_root))
 
 
-output_files_dest = pathlib.Path(f"./output_files/")
+output_files_dest = pathlib.Path(f"../output_files/")
 temp = tempfile.NamedTemporaryFile(prefix='test_',
                                    suffix='.docx',
                                    dir=f"{output_files_dest}",
@@ -38,6 +38,8 @@ for selection in textSelections:
 # Save the resulting document
 document.SaveToFile(temp.name, FileFormat.Docx2016)
 document.Close()
+
+# TODO - Move this to a function module to be used inside web_app.py for editing ingested documents
 
 
 

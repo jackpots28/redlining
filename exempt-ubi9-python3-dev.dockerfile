@@ -12,24 +12,6 @@ ENV WORKING_DIR_NAME="${HOME}/project"
 
 USER root
 
-# Install any possibly needed compile time packages / test issues
-RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && \
-    dnf install -y --setopt=tsflags=nodocs \
-                    cmake \
-                    gcc \
-                    less \
-                    lsof \
-                    libicu \
-                    iperf \ 
-                    nmap \
-                    nmap-ncat \
-                    unzip \
-                    zip \
-                    python3-pip \
-                  --exclude container-selinux && \
-    dnf clean all && \
-    ln -s /usr/bin/python3 /usr/bin/python
-
 RUN sed -i.ORIG -rn 's/(^UID_MIN)(.+)(1000)/\1 \2 500/p; /^UID_MIN/!p' /etc/login.defs && \
     groupadd -g ${USER_GID} -r ${USER_GROUP} && \
     useradd -s /bin/bash -u ${USER_UID} -g 0 -G ${USER_GROUP} -d ${HOME} -m ${USERNAME} 
@@ -45,10 +27,16 @@ RUN chmod -R 775 /usr/local/bin && \
     chmod -R 777 ${WORKING_DIR_NAME} && \
     rm -f /var/logs/*
 
+# Install any possibly needed compile time packages / test issues - system_packages.list file contains this list
+RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+RUN dnf install -y --setopt=tsflags=nodocs --exclude container-selinux < ${WORKING_DIR_NAME}/system_packages.list
+RUN dnf clean all && \
+    ln -s /usr/bin/python3 /usr/bin/python
+
 FROM base as interum
 
 # Install any pip required packageds from REQ
-RUN pip install -r ${WORKING_DIR_NAME}/requirements.txt
+RUN pip install -r ${WORKING_DIR_NAME}/docker_only_requirements.txt
 
 FROM interum as final
 

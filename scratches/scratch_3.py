@@ -9,10 +9,10 @@ from docx.enum.text import WD_COLOR_INDEX
 import os, sys
 from pathlib import Path
 
-project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), '../..'))
+project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), '../../..'))
 sys.path.insert(0, os.path.abspath(project_root))
 
-test_doc_path = Path("./word_doc_test.docx")
+test_doc_path = Path("../word_doc_test.docx")
 test_doc = docx.Document(test_doc_path)
 output_doc_path = Path("./output_files/test_doc.docx")
 output_doc = docx.Document(output_doc_path)
