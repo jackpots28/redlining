@@ -32,18 +32,23 @@ python3 web_app.py
 
 Pull latest image from GitHub Image Registry
 ```bash
-podman pull pull ghcr.io/jackpots28/redlining:latest
+sudo podman pull pull ghcr.io/jackpots28/redlining:latest
 ```
 
 Create staging directory for output files on local machine
 ```bash
-mkdir /tmp/temp_dir
-sudo chmod -R 777 /tmp/temp_dir
+mkdir /tmp/output_files
+sudo chmod -R 777 /tmp/output_files
 ```
 
-Run the container - Current entrypoint will not run the Python package but you can interact with the runtime
+Run the container for experimentation - Current entrypoint will not run the Python package but you can interact with the runtime
 ```bash
-podman run -it --rm --entrypoint /usr/bin/bash -p 8080:8080 -v /tmp/temp_dir:/home/devusr/project/output_files ghcr.io/jackpots28/redlining:latest
+sudo podman run -it --rm --entrypoint /usr/bin/bash -v /tmp/output_file:/home/devusr/project/output_files ghcr.io/jackpots28/redlining:latest
+```
+
+Run the Flask web_app.py for frontend access with a volume mount (Still needing to implement database for document retrieval
+```bash
+sudo podman run -d --rm --entrypoint='["python3", "/home/devusr/project/web_app.py"]' -p 8080:8080 -v /tmp/output_files:/home/devusr/project/output_files ghcr.io/jackpots28/redlining:latest
 ```
 
 ---
@@ -55,7 +60,7 @@ From within container runtime
 (app-root) [devusr@104cf9979ef5 project]$ pwd
 /home/devusr/project
 
-# The following show the test of Spire.Doc for Python3 - output to /tmp/temp_dir locally
+# The following shows the test of Spire.Doc for Python3 - output to /tmp/temp_dir locally
 (app-root) [devusr@104cf9979ef5 project]$ python3 scratch_4.py
 
 
