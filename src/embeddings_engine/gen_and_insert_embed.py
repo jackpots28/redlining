@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 import psycopg2
 
-import numpy as np
+from dotenv import load_dotenv, dotenv_values
 
 import ollama
 from loguru import logger
@@ -14,11 +14,14 @@ from loguru import logger
 project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), '../..'))
 sys.path.insert(0, os.path.abspath(project_root))
 
+from src.utils.exec_time_deco import exec_time
+
 logger.remove(0)
 logger.add(sys.stderr, format="{level} : {time} : {message} - proc({process})")
-
-
 logger.remove()
+
+load_dotenv()
+
 
 def retrieve_file(filename: str) -> pathlib.Path:
     temp_file_path = pathlib.Path(f"{project_root}/{filename}")
@@ -43,11 +46,11 @@ print(ollama.embeddings.__code__.co_varnames)
 @dataclass
 class db_connector:
     db_connection = None
-    db_user: str = "pguser"
-    db_passwd: str = "test"
-    db_host: str = "localhost"
-    db_port: int = 5432
-    db_name: str = "pgdb"
+    db_user: str = os.getenv("DB_USER")
+    db_passwd: str = os.getenv("DB_PASSWD")
+    db_host: str = os.getenv("DB_HOST")
+    db_port: int = os.getenv("DB_PORT")
+    db_name: str = os.getenv("DB_NAME")
 
     def __init__(self):
         if db_connector.db_connection is None:
@@ -64,6 +67,7 @@ class db_connector:
 
 
     @staticmethod
+    @exec_time
     def db_execute_insert(insert_sentence: str, insert_embedding: list) -> None:
         try:
             db_cursor = db_connector.db_connection.cursor()
@@ -76,6 +80,7 @@ class db_connector:
 
 
     @staticmethod
+    @exec_time
     def db_execute_retrieve(search_sentence_embed: list) -> list:
         output_list = []
         try:
@@ -83,7 +88,7 @@ class db_connector:
             db_cursor.execute("""SELECT * FROM items ORDER BY embedding <=> %s::vector LIMIT 5""",
                     (search_sentence_embed,))
             for row in db_cursor.fetchall():
-                print(f"ID: {row[0]}, CONTENT: {row[1]}, Cosine Similarity: {row[2]}")
+                # print(f"ID: {row[0]}, CONTENT: {row[1]}, Cosine Similarity: {row[2]}")
                 output_list.append(row[1])
             # db_cursor.close()
         except Exception as e:
@@ -93,6 +98,7 @@ class db_connector:
 
 
     @staticmethod
+    @exec_time
     def db_drop_table(table_name: str) -> None:
         try:
             db_cursor = db_connector.db_connection.cursor()
@@ -106,6 +112,7 @@ class db_connector:
         return None
 
     @staticmethod
+    @exec_time
     def db_create_table(table_name: str) -> None:
         try:
             db_cursor = db_connector.db_connection.cursor()
@@ -120,7 +127,7 @@ class db_connector:
 ''''''
 ''''''
 
-
+@exec_time
 def list_to_embeddings(input_list: list[str], model="nomic-embed-text", keep_alive=0, dimensions: int = 768) -> list[float]:
     embeddings_list = []
     for ingest_sentence in input_list:

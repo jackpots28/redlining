@@ -12,7 +12,7 @@ services:
       POSTGRES_USER: pguser
       POSTGRES_DB: pgdb
     volumes:
-      - /tmp/postgres_db/data:/var/lib/postgresql/data
+      - /tmp/pg_temp_data/data:/var/lib/postgresql/data
       - ./init_pgvector.sql:/docker-entrypoint-initdb.d/init_pgvector.sql
     ports:
       - 5432:5432

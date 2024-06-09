@@ -2,3 +2,8 @@ Need to create a development container to run the hugging_face code in (for depe
 Will also need to create one for the document processing and flask frontend for testing
 
 
+## Splitting full sentence into fragments of 'n_number_words' size and returning a new list of fragment phrases
+sentence = "Some number of words in length sentence."
+spit_sentence = sentence.split()
+n_number_words: int = 2
+n_split_sentence: list = [' '.join(split_sentence[i:i+n_number_words]) for i in range(0,len(split_sentence), n_number_words]
