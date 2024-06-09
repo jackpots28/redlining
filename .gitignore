@@ -4,7 +4,7 @@
 logs/*
 output_files/*
 tests/logs/*
-.env
+./.env
 
 !output_files/.gitkeep
 !logs/.gitkeep
