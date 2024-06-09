@@ -1,0 +1,24 @@
+# docker compose file for creating pgvector container + adminer for web interface
+version: '3'
+
+services:
+
+  db:
+    build: . 
+    restart: always
+    shm_size: 128mb
+    environment:
+      POSTGRES_PASSWORD: test
+      POSTGRES_USER: pguser
+      POSTGRES_DB: pgdb
+    volumes:
+      - /tmp/postgres_db/data:/var/lib/postgresql/data
+      - ./init_pgvector.sql:/docker-entrypoint-initdb.d/init_pgvector.sql
+    ports:
+      - 5432:5432
+
+  adminer:
+    image: local/adminer:latest
+    restart: always
+    ports:
+      - 8080:8080
