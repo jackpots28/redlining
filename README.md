@@ -4,6 +4,10 @@ Document ingestion tool for replacing context-matched phrases with predefined ve
 
 [![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/en/3.0.x/)
+[![Pandas](https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white)](https://pandas.pydata.org/)
+[![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white)](https://numpy.org/)
+[![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 ## Run Locally
 
 Clone the project
@@ -32,8 +36,14 @@ python3 web_app.py
 
 Pull latest image from GitHub Image Registry
 ```bash
-sudo podman pull pull ghcr.io/jackpots28/redlining:latest
+sudo podman pull ghcr.io/jackpots28/redlining:latest
 ```
+or
+```bash
+sudo docker pull ghcr.io/jackpots28/redlining:latest
+```
+
+---
 
 Create staging directory for output files on local machine
 ```bash
@@ -41,14 +51,26 @@ mkdir /tmp/output_files
 sudo chmod -R 777 /tmp/output_files
 ```
 
+---
+
 Run the container for experimentation - Current entrypoint will not run the Python package but you can interact with the runtime
 ```bash
 sudo podman run -it --rm --entrypoint /usr/bin/bash -v /tmp/output_file:/home/devusr/project/output_files ghcr.io/jackpots28/redlining:latest
 ```
+or
+```bash
+sudo docker run -it --rm --entrypoint /usr/bin/bash -v /tmp/output_file:/home/devusr/project/output_files ghcr.io/jackpots28/redlining:latest
+```
+
+---
 
 Run the Flask web_app.py for frontend access with a volume mount (Still needing to implement database for document retrieval
 ```bash
 sudo podman run -d --rm --entrypoint='["python3", "/home/devusr/project/web_app.py"]' -p 8080:8080 -v /tmp/output_files:/home/devusr/project/output_files ghcr.io/jackpots28/redlining:latest
+```
+or
+```bash
+sudo docker run -d --rm --entrypoint='["python3", "/home/devusr/project/web_app.py"]' -p 8080:8080 -v /tmp/output_files:/home/devusr/project/output_files ghcr.io/jackpots28/redlining:latest
 ```
 
 ---
