@@ -8,3 +8,4 @@ tests/logs/*
 !output_files/.gitkeep
 !logs/.gitkeep
 !tests/logs/.gitkeep
+/.env

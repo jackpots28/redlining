@@ -10,6 +10,7 @@ import os, sys, string
 project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, os.path.abspath(project_root))
 
+# Sourcing internal packages
 from src.logger import logger
 from src.processing import document_processor
 

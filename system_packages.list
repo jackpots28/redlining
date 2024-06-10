@@ -1,0 +1,11 @@
+cmake
+gcc
+less
+lsof
+libicu
+iperf
+nmap
+nmap-ncat
+unzip
+zip
+python3-pip
