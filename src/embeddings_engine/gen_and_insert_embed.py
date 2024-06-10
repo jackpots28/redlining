@@ -10,15 +10,23 @@ from dotenv import load_dotenv, dotenv_values
 
 import ollama
 from loguru import logger
+from src.utils.exec_time_deco import exec_time
+
+import numpy as np
+from numpy.linalg import norm
+
+import pandas as pd
 
 project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), '../..'))
 sys.path.insert(0, os.path.abspath(project_root))
 
-from src.utils.exec_time_deco import exec_time
+# from src.utils.exec_time_deco import exec_time
 
+# Started to use loguru, seems nice
 logger.remove(0)
 logger.add(sys.stderr, format="{level} : {time} : {message} - proc({process})")
 logger.remove()
+
 
 load_dotenv()
 
@@ -30,19 +38,22 @@ def retrieve_file(filename: str) -> pathlib.Path:
 
     return temp_file_path.resolve()
 
-test_ipsum = retrieve_file("test_ipsum.txt")
 
 def file_to_list(file: pathlib.Path) -> list[str]:
     logger.info(f"Reading file {file}")
     output_list = [sentence for sentence in (file.read_text()).split(".")]
-
+    output_list = list(filter(None, output_list))
     return output_list
 
-test_ipsum_list = file_to_list(test_ipsum)
-print(test_ipsum_list)
 
+test_ipsum = retrieve_file("test_ipsum.txt")
+test_ipsum_list = file_to_list(test_ipsum)
+
+print(test_ipsum_list)
 print(ollama.embeddings.__code__.co_varnames)
 
+
+# Utility class for psql db connector and methods for insertion / selection based on cosine similarity
 @dataclass
 class db_connector:
     db_connection = None
@@ -134,7 +145,7 @@ def list_to_embeddings(input_list: list[str], model="nomic-embed-text", keep_ali
         # print(f"Sentence: {sentence}")
         temp_embed = ollama.embeddings(model=model, prompt=ingest_sentence, keep_alive=keep_alive, options={"embedding_only": True})
         if len(temp_embed["embedding"]) == dimensions:
-            embeddings_list.append(temp_embed)
+            embeddings_list.append(temp_embed["embedding"])
 
     return embeddings_list
 
@@ -142,6 +153,21 @@ def list_to_embeddings(input_list: list[str], model="nomic-embed-text", keep_ali
 
 
 if __name__ == "__main__":
+
+    ''''''
+    ''' Testing Pandas and Numpy for Cosine Similarity vs using vector db '''
+    df = pd.DataFrame({'Content' : test_ipsum_list, 'Embedding' : list_to_embeddings(test_ipsum_list)})
+    print(df.to_markdown(index=False))
+
+    print(f"{'-' * 40}")
+
+    cosine = np.dot(df.Embedding[0], df.Embedding[1])/(norm(df.Embedding[0])*norm(df.Embedding[1]))
+    cosine2 = np.dot(df.Embedding[2], df.Embedding[3]) / (norm(df.Embedding[2]) * norm(df.Embedding[3]))
+    print(f"Cosine similarity for index 0 and 1: {cosine}")
+    print(f"Cosine similarity for index 2 and 3: {cosine2}")
+    ''''''
+
+    print(f"{'-'*40}")
     sentence = "quis nostrum exercitationem ullam corporis"
     search_embed = ollama.embeddings(model="nomic-embed-text", prompt=sentence, keep_alive=0, options={"embedding_only": True})
 
