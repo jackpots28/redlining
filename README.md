@@ -55,11 +55,11 @@ sudo chmod -R 777 /tmp/output_files
 
 Run the container for experimentation - Current entrypoint will not run the Python package but you can interact with the runtime
 ```bash
-sudo podman run -it --rm --entrypoint /usr/bin/bash -v /tmp/output_file:/home/devusr/project/output_files ghcr.io/jackpots28/redlining:latest
+sudo podman run -it --rm --entrypoint /usr/bin/bash -v /tmp/output_files:/home/devusr/project/output_files ghcr.io/jackpots28/redlining:latest
 ```
 or
 ```bash
-sudo docker run -it --rm --entrypoint /usr/bin/bash -v /tmp/output_file:/home/devusr/project/output_files ghcr.io/jackpots28/redlining:latest
+sudo docker run -it --rm --entrypoint /usr/bin/bash -v /tmp/output_files:/home/devusr/project/output_files ghcr.io/jackpots28/redlining:latest
 ```
 
 ---
