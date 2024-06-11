@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 import psycopg2
 
-from dotenv import load_dotenv, dotenv_values
+# from dotenv import load_dotenv, dotenv_values
 
 import ollama
 from loguru import logger
@@ -27,8 +27,7 @@ logger.remove(0)
 logger.add(sys.stderr, format="{level} : {time} : {message} - proc({process})")
 logger.remove()
 
-
-load_dotenv()
+# load_dotenv()
 
 
 def retrieve_file(filename: str) -> pathlib.Path:
@@ -76,19 +75,18 @@ class db_connector:
             except Exception as e:
                 print(f"Exception while connecting to database: {str(e)}")
 
-
     @staticmethod
     @exec_time
     def db_execute_insert(insert_sentence: str, insert_embedding: list) -> None:
         try:
             db_cursor = db_connector.db_connection.cursor()
-            db_cursor.execute("INSERT INTO items (content, embedding) VALUES (%s, %s)", (insert_sentence, insert_embedding))
+            db_cursor.execute("INSERT INTO items (content, embedding) VALUES (%s, %s)",
+                              (insert_sentence, insert_embedding))
             db_connector.db_connection.commit()
             # db_cursor.close()
         except Exception as e:
             db_connector.db_connection.close()
             print(f"Error executing insert statement: {str(e)}")
-
 
     @staticmethod
     @exec_time
@@ -97,7 +95,7 @@ class db_connector:
         try:
             db_cursor = db_connector.db_connection.cursor()
             db_cursor.execute("""SELECT * FROM items ORDER BY embedding <=> %s::vector LIMIT 5""",
-                    (search_sentence_embed,))
+                              (search_sentence_embed,))
             for row in db_cursor.fetchall():
                 # print(f"ID: {row[0]}, CONTENT: {row[1]}, Cosine Similarity: {row[2]}")
                 output_list.append(row[1])
@@ -106,7 +104,6 @@ class db_connector:
             db_connector.db_connection.close()
             print(f"Error executing retrieve statement: {str(e)}")
         return output_list
-
 
     @staticmethod
     @exec_time
@@ -127,7 +124,8 @@ class db_connector:
     def db_create_table(table_name: str) -> None:
         try:
             db_cursor = db_connector.db_connection.cursor()
-            db_cursor.execute(f"CREATE TABLE {table_name} (id bigserial PRIMARY KEY, content TEXT, embedding vector(768))")
+            db_cursor.execute(
+                f"CREATE TABLE {table_name} (id bigserial PRIMARY KEY, content TEXT, embedding vector(768))")
             db_connector.db_connection.commit()
             # db_cursor.close()
         except Exception as e:
@@ -138,50 +136,51 @@ class db_connector:
 ''''''
 ''''''
 
+
 @exec_time
-def list_to_embeddings(input_list: list[str], model="nomic-embed-text", keep_alive=0, dimensions: int = 768) -> list[float]:
+def list_to_embeddings(input_list: list[str], model="nomic-embed-text", keep_alive=0, dimensions: int = 768) -> list[
+    float]:
     embeddings_list = []
     for ingest_sentence in input_list:
         # print(f"Sentence: {sentence}")
-        temp_embed = ollama.embeddings(model=model, prompt=ingest_sentence, keep_alive=keep_alive, options={"embedding_only": True})
+        temp_embed = ollama.embeddings(model=model, prompt=ingest_sentence, keep_alive=keep_alive,
+                                       options={"embedding_only": True})
         if len(temp_embed["embedding"]) == dimensions:
             embeddings_list.append(temp_embed["embedding"])
 
     return embeddings_list
 
 
-
-
 if __name__ == "__main__":
 
     ''''''
     ''' Testing Pandas and Numpy for Cosine Similarity vs using vector db '''
-    df = pd.DataFrame({'Content' : test_ipsum_list, 'Embedding' : list_to_embeddings(test_ipsum_list)})
+    df = pd.DataFrame({'Content': test_ipsum_list, 'Embedding': list_to_embeddings(test_ipsum_list)})
     print(df.to_markdown(index=False))
 
     print(f"{'-' * 40}")
 
-    cosine = np.dot(df.Embedding[0], df.Embedding[1])/(norm(df.Embedding[0])*norm(df.Embedding[1]))
+    cosine = np.dot(df.Embedding[0], df.Embedding[1]) / (norm(df.Embedding[0]) * norm(df.Embedding[1]))
     cosine2 = np.dot(df.Embedding[2], df.Embedding[3]) / (norm(df.Embedding[2]) * norm(df.Embedding[3]))
     print(f"Cosine similarity for index 0 and 1: {cosine}")
     print(f"Cosine similarity for index 2 and 3: {cosine2}")
     ''''''
 
-    print(f"{'-'*40}")
-    sentence = "quis nostrum exercitationem ullam corporis"
-    search_embed = ollama.embeddings(model="nomic-embed-text", prompt=sentence, keep_alive=0, options={"embedding_only": True})
-
-    test_db = db_connector()
-
-    test_db.db_drop_table("items")
-    test_db.db_create_table("items")
-
-    for ingest_sentence in test_ipsum_list:
-        temp_embed = ollama.embeddings(model="nomic-embed-text", prompt=ingest_sentence, keep_alive=0, options={"embedding_only": True})
-        if len(temp_embed["embedding"]) == 768:
-            test_db.db_execute_insert(ingest_sentence, temp_embed["embedding"])
-
-
-
-    test_list = test_db.db_execute_retrieve(search_embed["embedding"])
-    print(test_list)
+    print(f"{'-' * 40}")
+    # sentence = "quis nostrum exercitationem ullam corporis"
+    # search_embed = ollama.embeddings(model="nomic-embed-text", prompt=sentence, keep_alive=0,
+    #                                  options={"embedding_only": True})
+    #
+    # test_db = db_connector()
+    #
+    # test_db.db_drop_table("items")
+    # test_db.db_create_table("items")
+    #
+    # for ingest_sentence in test_ipsum_list:
+    #     temp_embed = ollama.embeddings(model="nomic-embed-text", prompt=ingest_sentence, keep_alive=0,
+    #                                    options={"embedding_only": True})
+    #     if len(temp_embed["embedding"]) == 768:
+    #         test_db.db_execute_insert(ingest_sentence, temp_embed["embedding"])
+    #
+    # test_list = test_db.db_execute_retrieve(search_embed["embedding"])
+    # print(test_list)
