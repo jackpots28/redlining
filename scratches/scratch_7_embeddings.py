@@ -8,10 +8,10 @@ from loguru import logger
 project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), '.'))
 sys.path.insert(0, os.path.abspath(project_root))
 
-logger.remove(0)
-logger.add(sys.stderr, format="{level} : {time} : {message} - proc({process})")
-
-logger.remove()
+# logger.remove(0)
+# logger.add(sys.stderr, format="{level} : {time} : {message} - proc({process})")
+#
+# logger.remove()
 
 
 def retrieve_file(filename: str) -> pathlib.Path:

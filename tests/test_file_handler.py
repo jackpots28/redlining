@@ -1,8 +1,6 @@
-from pathlib import Path
-
+import os
+import sys
 import unittest
-import docx
-import os, sys, string
 
 # Root directory to repo prep - addition to os path for python
 project_root = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
@@ -10,6 +8,7 @@ sys.path.insert(0, os.path.abspath(project_root))
 
 # Sourcing internal packages
 from src.file_transactions import file_handler
+
 
 class TestFileHandler(unittest.TestCase):
 
@@ -21,7 +20,6 @@ class TestFileHandler(unittest.TestCase):
         unpermitted_result = file_handler.allowed_file(unpermitted_test_file_name)
         self.assertTrue(allowed_result)
         self.assertFalse(unpermitted_result)
-
 
 
 if __name__ == '__main__':

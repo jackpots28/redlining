@@ -1,11 +1,10 @@
 import os
+import string
 import sys
 import pathlib
 
-from dataclasses import dataclass
-
-import psycopg2
-
+# from dataclasses import dataclass
+# import psycopg2
 # from dotenv import load_dotenv, dotenv_values
 
 import ollama
@@ -27,20 +26,21 @@ logger.remove(0)
 logger.add(sys.stderr, format="{level} : {time} : {message} - proc({process})")
 logger.remove()
 
+
 # load_dotenv()
 
-
+@exec_time
 def retrieve_file(filename: str) -> pathlib.Path:
     temp_file_path = pathlib.Path(f"{project_root}/{filename}")
     logger.info(f"Retrieving file {temp_file_path.resolve()}")
     logger.info(f"{filename} exists: {temp_file_path.exists()}")
-
     return temp_file_path.resolve()
 
 
+@exec_time
 def file_to_list(file: pathlib.Path) -> list[str]:
     logger.info(f"Reading file {file}")
-    output_list = [sentence for sentence in (file.read_text()).split(".")]
+    output_list = [sentence for sentence in (file.read_text()).split("\n")]
     output_list = list(filter(None, output_list))
     return output_list
 
@@ -48,11 +48,14 @@ def file_to_list(file: pathlib.Path) -> list[str]:
 test_ipsum = retrieve_file("test_ipsum.txt")
 test_ipsum_list = file_to_list(test_ipsum)
 
-print(test_ipsum_list)
-print(ollama.embeddings.__code__.co_varnames)
+test_dds_scratch = retrieve_file("dds_scratch_commands.txt")
+test_dds_list = file_to_list(test_dds_scratch)
 
+# print(test_ipsum_list)
+# print(ollama.embeddings.__code__.co_varnames)
 
 # Utility class for psql db connector and methods for insertion / selection based on cosine similarity
+'''
 @dataclass
 class db_connector:
     db_connection = None
@@ -131,19 +134,22 @@ class db_connector:
         except Exception as e:
             db_connector.db_connection.close()
             print(f"Error creating table: {str(e)}")
-
+'''
 
 ''''''
 ''''''
 
 
 @exec_time
-def list_to_embeddings(input_list: list[str], model="nomic-embed-text", keep_alive=0, dimensions: int = 768) -> list[
-    float]:
+def list_to_embeddings(input_list: list[str],
+                       model="nomic-embed-text",
+                       keep_alive=0,
+                       dimensions: int = 768) -> list[float]:
     embeddings_list = []
     for ingest_sentence in input_list:
-        # print(f"Sentence: {sentence}")
-        temp_embed = ollama.embeddings(model=model, prompt=ingest_sentence, keep_alive=keep_alive,
+        temp_embed = ollama.embeddings(model=model,
+                                       prompt=ingest_sentence,
+                                       keep_alive=keep_alive,
                                        options={"embedding_only": True})
         if len(temp_embed["embedding"]) == dimensions:
             embeddings_list.append(temp_embed["embedding"])
@@ -151,36 +157,72 @@ def list_to_embeddings(input_list: list[str], model="nomic-embed-text", keep_ali
     return embeddings_list
 
 
+@exec_time
+def string_to_embedding(input_string: string, model="nomic-embed-text", keep_alive=0) -> float:
+    return ollama.embeddings(model=model,
+                             prompt=input_string,
+                             keep_alive=keep_alive,
+                             options={"embedding_only": True})["embedding"]
+
+
+# produces float output of cosine similarity between two embedding values
+@exec_time
+def get_cosine_between_two_embeddings(embed_1: list[float], embed_2: list[float]) -> float:
+    return np.dot(embed_1, embed_2) / (norm(embed_1) * norm(embed_2))
+
+
+@exec_time
+def ingest_embeddings_into_dataframe(input_content_list: list[str]) -> pd.DataFrame:
+    return pd.DataFrame({'Content': input_content_list, 'Embedding': list_to_embeddings(input_content_list)})
+
+
 if __name__ == "__main__":
 
-    ''''''
-    ''' Testing Pandas and Numpy for Cosine Similarity vs using vector db '''
-    df = pd.DataFrame({'Content': test_ipsum_list, 'Embedding': list_to_embeddings(test_ipsum_list)})
-    print(df.to_markdown(index=False))
+    test_string = "This is a test string for embedding purposes"
+    test_embedding = string_to_embedding(test_string)
+    print(test_embedding)
 
-    print(f"{'-' * 40}")
+    print(test_dds_list)
 
-    cosine = np.dot(df.Embedding[0], df.Embedding[1]) / (norm(df.Embedding[0]) * norm(df.Embedding[1]))
-    cosine2 = np.dot(df.Embedding[2], df.Embedding[3]) / (norm(df.Embedding[2]) * norm(df.Embedding[3]))
-    print(f"Cosine similarity for index 0 and 1: {cosine}")
-    print(f"Cosine similarity for index 2 and 3: {cosine2}")
-    ''''''
+    for i in range(0, len(test_dds_list)):
+        print(i)
+        print(string_to_embedding(test_dds_list[i]))
 
-    print(f"{'-' * 40}")
-    # sentence = "quis nostrum exercitationem ullam corporis"
-    # search_embed = ollama.embeddings(model="nomic-embed-text", prompt=sentence, keep_alive=0,
-    #                                  options={"embedding_only": True})
+    # ''''''
+    # ''' Testing Pandas and Numpy for Cosine Similarity vs using vector db '''
+    # df = pd.DataFrame({'Content': test_ipsum_list, 'Embedding': list_to_embeddings(test_ipsum_list)})
     #
-    # test_db = db_connector()
+    # # print(type(df.Embedding[1][0]))
     #
-    # test_db.db_drop_table("items")
-    # test_db.db_create_table("items")
+    # for i in range(0, df.Embedding.size):
+    #     temp_cosine_value = get_cosine_between_two_embeddings(df.Embedding[0], df.Embedding[i])
+    #     print(f"Index 0 similarity to Index {i}: {temp_cosine_value}")
+    #     if temp_cosine_value >= 0.70:
+    #         print(f"Content at match: {df.Content[i]}")
     #
-    # for ingest_sentence in test_ipsum_list:
-    #     temp_embed = ollama.embeddings(model="nomic-embed-text", prompt=ingest_sentence, keep_alive=0,
-    #                                    options={"embedding_only": True})
-    #     if len(temp_embed["embedding"]) == 768:
-    #         test_db.db_execute_insert(ingest_sentence, temp_embed["embedding"])
+    # print(f"{'-' * 40}")
+    # print(df.to_markdown(index=True))
     #
-    # test_list = test_db.db_execute_retrieve(search_embed["embedding"])
-    # print(test_list)
+    # ''''''
+    #
+    # print(f"{'-' * 40}")
+
+    '''
+    sentence = "quis nostrum exercitationem ullam corporis"
+    search_embed = ollama.embeddings(model="nomic-embed-text", prompt=sentence, keep_alive=0,
+                                     options={"embedding_only": True})
+
+    test_db = db_connector()
+
+    test_db.db_drop_table("items")
+    test_db.db_create_table("items")
+
+    for ingest_sentence in test_ipsum_list:
+        temp_embed = ollama.embeddings(model="nomic-embed-text", prompt=ingest_sentence, keep_alive=0,
+                                       options={"embedding_only": True})
+        if len(temp_embed["embedding"]) == 768:
+            test_db.db_execute_insert(ingest_sentence, temp_embed["embedding"])
+
+    test_list = test_db.db_execute_retrieve(search_embed["embedding"])
+    print(test_list)
+    '''
